@@ -1,13 +1,13 @@
 import { FC, MouseEventHandler } from 'react';
 import { connect } from 'react-redux';
+import { decrementLikes, incrementLikes } from './redux/actions';
 
-type Props = {
-  likes: number;
+type Props<T> = {
   onIncrementLikes(): void;
   onDecrementLikes(): void;
-};
+} & T;
 
-const Likes: FC<Props> = (props) => {
+const Likes: FC<Props<{ likes: number }>> = (props) => {
   const { likes, onIncrementLikes, onDecrementLikes } = props;
 
   const hadleIncrementLikes: MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -27,24 +27,18 @@ const Likes: FC<Props> = (props) => {
   );
 };
 
-function mapStateToProps(state: Props) {
+function mapStateToProps(state: Props<{ likesReducer: { likes: number } }>) {
   console.log('mapStateToProps >', state);
+  const { likesReducer: { likes } } = state;
   return {
-    likes: state.likes,
+    likes,
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    onIncrementLikes: () => {
-      const action = { type: 'INCREMENT' };
-      dispatch(action);
-    },
-    onDecrementLikes: () => {
-      console.log('click');
-      const action = { type: 'DECREMENT' };
-      dispatch(action);
-    },
+    onIncrementLikes: () => dispatch(incrementLikes()),
+    onDecrementLikes: () => dispatch(decrementLikes()),
   };
 };
 
